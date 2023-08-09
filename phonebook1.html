@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Phonebook App</title>
+    <!-- Add Bootstrap CSS link -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Add your custom CSS styles here */
+      .container {
+        max-width: 600px;
+        margin-top: 30px;
+        border: 1px solid #ddd;
+        box-shadow: 4px 4px 4px 5px #dad9d9;
+      }
+      .contact-item {
+        margin-bottom: 10px;
+      }
+      .alert {
+        margin-top: 10px;
+      }
+      .btn-primary {
+        margin-left: 10px;
+      }
+      #searchInput {
+        width: 300px;
+      }
+      .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .btn-search {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      .sa {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="text-center mb-4">Phonebook App</h2>
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          id="contactName"
+          class="form-control"
+          placeholder="Contact Name"
+        />
+        <input
+          type="text"
+          id="contactNumber"
+          class="form-control"
+          placeholder="Contact Number"
+        />
+        <div class="input-group-append">
+          <button class="btn btn-primary" onclick="addContact()">
+            Add Contact
+          </button>
+        </div>
+      </div>
+      <label for="searchInput">Search:</label>
+      <div class="sa">
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control"
+          placeholder="Enter name to search"
+        />
+      </div>
+      <div class="button">
+        <button class="btn btn-primary btn-search" onclick="search()">
+          Search
+        </button>
+      </div>
+
+      <div id="contactList"></div>
+      <div id="result" class="alert" style="display: none"></div>
+    </div>
+
+    <!-- Add Bootstrap and your JavaScript file(s) here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+      const contacts = [];
+
+      function addContact() {
+        const contactNameInput = document.getElementById('contactName');
+        const contactNumberInput = document.getElementById('contactNumber');
+        const contactName = contactNameInput.value.trim();
+        const contactNumber = contactNumberInput.value.trim();
+
+        if(contactName===''||contactNumber===''){
+          alert("Please enter both contact name  and number");
+          return;
+        }
+        const existingContact=contacts.find(contact=>contact.name.toLowerCase()===contactName.toLowerCase())
+        if(existingContact){
+          alert("Contact already Exits");
+          return;
+        }
+        const newContact={name:contactName,number:contactNumber}
+        contacts.push(newContact);
+        renderContactList();
+        contactNameInput.value='';
+        contactNumberInput.value='';
+
+
+      }
+
+      function deleteContact(contactName) {
+        const indexToDelete=contacts.findIndex(contact=>contact.name.toLowerCase()===contactName.toLowerCase())
+        if(indexToDelete!==-1){
+          contacts.splice(indexToDelete,1);
+          renderContactList();
+        }
+      }
+
+      function renderContactList() {
+        const contactList = document.getElementById('contactList');
+  contactList.innerHTML = '';
+
+  contacts.forEach(contact => {
+    const contactItem = document.createElement('div');
+    contactItem.classList.add('contact-item', 'alert', 'alert-secondary');
+    contactItem.innerHTML = `
+      ${contact.name} - ${contact.number}
+      <button class="btn btn-danger btn-sm float-right" onclick="deleteContact('${contact.name}')">Delete</button>
+    `;
+    contactList.appendChild(contactItem);
+  });
+      }
+
+      function search() {
+       const searchInput=document.getElementById("searchInput")
+       const searchName = searchInput.value.trim();
+       const resultAlert=document.getElementById("result")
+
+       if(searchName===''){
+        alert("please enter a name to search")
+        return;
+       }
+       const result=contacts.find(contact=>contact.name.toLowerCase()===searchName.toLowerCase())
+       if(result){
+        resultAlert.classList.remove('alert-danger');
+        resultAlert.classList.add('alert-success');
+        resultAlert.innerHTML="Found: "+result.name+"-"+result.number;
+       }else{
+        resultAlert.classList.remove('alert-success');
+    resultAlert.classList.add('alert-danger');
+    resultAlert.innerText = "Not found.";
+       }
+       resultAlert.style.display='block';
+
+      }
+      renderContactList();
+
+      // Initial rendering of the contact list
+    </script>
+  </body>
+</html>
+
+
+ 
